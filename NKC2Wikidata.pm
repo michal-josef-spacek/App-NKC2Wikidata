@@ -45,7 +45,7 @@ sub run {
 
 		print STDERR "Usage: $0 [-h] [--version] id_of_book\n";
 		print STDERR "\t-h\t\tPrint help.\n";
-		print STDERR "\t-u\tUpload (instead of print).\n";
+		print STDERR "\t-u\t\tUpload (instead of print).\n";
 		print STDERR "\t--version\tPrint version.\n";
 		print STDERR "\tid_of_book\tModule prefix. e.g. ".
 			"Module::Install\n";
