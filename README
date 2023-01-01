@@ -1,0 +1,45 @@
+NAME
+    nkc-to-wd - Script to add book from National library of the Czech
+    Republic to Wikidata.
+
+SYNOPSIS
+     nkc-to-wd [-h] [--version] id_of_book
+
+ARGUMENTS
+    *       "-h"
+
+            Print help.
+
+    *       "--version"
+
+            Print version of script.
+
+    *       "id_of_book"
+
+            Identifier of book. Possible ids are: ISBN or Czech national
+            bibliography id.
+
+EXAMPLE1
+     # Adding book edition defined by ISBN number
+     nkc-to-wd 978-80-276-0470-8
+
+EXAMPLE2
+     # Adding book edition defined by Czech national bibliography id
+     nkc-to-wd cnb003322696
+
+REPOSITORY
+    <https://github.com/michal-josef-spacek/App-NKC2Wikidata>
+
+AUTHOR
+    Michal Josef Špaček <mailto:skim@cpan.org>
+
+    <http://skim.cz>
+
+LICENSE AND COPYRIGHT
+    © 2020-2022 Michal Josef Špaček
+
+    BSD 2-Clause License
+
+VERSION
+    0.01
+

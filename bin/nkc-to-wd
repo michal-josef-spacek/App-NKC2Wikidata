@@ -1,0 +1,82 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use App::NKC2Wikidata;
+
+our $VERSION = 0.01;
+
+# Run.
+exit App::NKC2Wikidata->new->run;
+
+# Print version.
+sub VERSION_MESSAGE {
+	print $VERSION."\n";
+	exit 0;
+}
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+nkc-to-wd - Script to add book from National library of the Czech Republic to Wikidata.
+
+=head1 SYNOPSIS
+
+ nkc-to-wd [-h] [--version] id_of_book
+
+=head1 ARGUMENTS
+
+=over 8
+
+=item * C<-h>
+
+Print help.
+
+=item * C<--version>
+
+Print version of script.
+
+=item * C<id_of_book>
+
+Identifier of book.
+Possible ids are: ISBN or Czech national bibliography id.
+
+=back
+
+=head1 EXAMPLE1
+
+ # Adding book edition defined by ISBN number
+ nkc-to-wd 978-80-276-0470-8
+
+=head1 EXAMPLE2
+
+ # Adding book edition defined by Czech national bibliography id
+ nkc-to-wd cnb003322696
+
+=head1 REPOSITORY
+
+L<https://github.com/michal-josef-spacek/App-NKC2Wikidata>
+
+=head1 AUTHOR
+
+Michal Josef Špaček L<mailto:skim@cpan.org>
+
+L<http://skim.cz>
+
+=head1 LICENSE AND COPYRIGHT
+
+© 2020-2022 Michal Josef Špaček
+
+BSD 2-Clause License
+
+=head1 VERSION
+
+0.01
+
+=cut
