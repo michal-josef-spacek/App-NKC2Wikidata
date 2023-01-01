@@ -195,8 +195,17 @@ sub callback_people {
 	my $people = shift;
 
 	if (! defined $people->nkcr_aut) {
-		warn encode_utf8("People without NKCR AUT ID '".$people->name.' '.
-			$people->surname."' doesn't supported.")."\n";
+		my $people_name;
+		if (defined $people->name) {
+			$people_name .= $people->name;
+		}
+		if (defined $people->surname) {
+			if (defined $people_name) {
+				$people_name .= ' ';
+			}
+			$people_name .= $people->surname;
+		}
+		warn encode_utf8("People without NKCR AUT ID '".$people_name."' doesn't supported.")."\n";
 		return;
 	}
 
