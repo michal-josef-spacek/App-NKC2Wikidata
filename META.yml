@@ -26,7 +26,20 @@ no_index:
     - t
     - xt
 requires:
+  Business::ISBN: 0
+  Encode: 0
+  Error::Pure: 0
   Getopt::Std: 0
+  MARC::Convert::Wikidata: 0
+  MARC::Record: 0
+  WQS::SPARQL: 0
+  WQS::SPARQL::Query::Count: 0
+  WQS::SPARQL::Query::Select: 0
+  WQS::SPARQL::Result: 0
+  Wikibase::API: 0
+  Wikibase::Cache: 0
+  Wikibase::Datatype::Print::Item: 0
+  ZOOM: 0
   perl: 5.6.0
 resources:
   bugtracker: https://github.com/michal-josef-spacek/App-NKC2Wikidata/issues
