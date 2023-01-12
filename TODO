@@ -4,7 +4,8 @@ TODO
 2. Support postcards - see https://aleph.nkp.cz/F/?func=direct&doc_number=000287643&local_base=CNB
 3. Support audiobooks.
 4. Look for original literary work (MARC field 24010)
-5. 
+5. If i am not uploading to Wikidata, no check for existence.
+6.
 
 Applied
 =======
