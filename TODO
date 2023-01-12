@@ -5,7 +5,8 @@ TODO
 3. Support audiobooks.
 4. Look for original literary work (MARC field 24010)
 5. If i am not uploading to Wikidata, no check for existence. (with explicit option)
-6.
+6. Debug mode.
+7.
 
 Applied
 =======
