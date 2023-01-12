@@ -226,18 +226,41 @@ sub callback_people {
 
 # XXX Rewrite to Wikidata::Reconcilation::Publisher
 sub callback_publisher_name {
-	my $publisher = shift;
+	my ($publisher, $year) = @_;
 
-	my $sparql = WQS::SPARQL::Query::Select->new->select_value({
-		'P31' => 'Q2085381',
-		'P1448' => $publisher->name,
-	});
-	my $q = WQS::SPARQL->new;
-	my $ret_hr = $q->query($sparql);
-	my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	my $publisher_name = $publisher->name;
+	my ($sparql, $q, $ret_hr, $qid);
 
+	# Look for publisher in official name and between years.
+	if (defined $year) {
+		my $sparql = <<"END";
+SELECT DISTINCT ?item WHERE {
+  ?item wdt:P31 wd:Q2085381.
+  ?item wdt:P571 ?inception.
+  ?item wdt:P576 ?dissolved.
+  ?item wdt:P1448 '$publisher_name'\@cs.
+  FILTER( ?inception <= "$year-31-12T00:00:00"^^xsd:dateTime )
+  FILTER( ?dissolved >= "$year-01-01T00:00:00"^^xsd:dateTime )
+}
+END
+		$q = WQS::SPARQL->new;
+		$ret_hr = $q->query($sparql);
+		($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	}
+
+	# Look for publisher in official name.
 	if (! defined $qid) {
-		my $publisher_name = $publisher->name;
+		$sparql = WQS::SPARQL::Query::Select->new->select_value({
+			'P31' => 'Q2085381',
+			'P1448' => $publisher->name,
+		});
+		$q = WQS::SPARQL->new;
+		$ret_hr = $q->query($sparql);
+		($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	}
+
+	# Look for publisher in label.
+	if (! defined $qid) {
 		$sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   {
