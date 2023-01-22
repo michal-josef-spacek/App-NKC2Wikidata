@@ -6,7 +6,8 @@ TODO
 4. Look for original literary work (MARC field 24010)
 5. If i am not uploading to Wikidata, no check for existence. (with explicit option)
 6. Debug mode.
-7.
+7. Move reconcilations related to NKC to NKC:: module.
+8.
 
 Applied
 =======
