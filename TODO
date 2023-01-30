@@ -7,7 +7,9 @@ TODO
 5. If i am not uploading to Wikidata, no check for existence. (with explicit option)
 6. Debug mode.
 7. Move reconcilations related to NKC to NKC:: module.
-8.
+8. Look to publisher reconcilation for cnb001705695 - Another publisher, than
+expected.
+9.
 
 Applied
 =======
