@@ -224,7 +224,8 @@ sub callback_people {
 	return $qid->{'item'};
 }
 
-# XXX Rewrite to Wikidata::Reconcilation::Publisher
+# XXX Rewrite to Wikidata::Reconcilation::Publisher or
+# NKC::Wikidata::Reconcilation
 sub callback_publisher_name {
 	my ($publisher, $year) = @_;
 
