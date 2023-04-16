@@ -39,6 +39,7 @@ requires:
   Wikibase::API: 0
   Wikibase::Cache: 0
   Wikibase::Datatype::Print::Item: 0
+  Wikidata::Reconcilation::VersionEditionOrTranslation: 0
   ZOOM: 0
   perl: 5.6.0
 resources:

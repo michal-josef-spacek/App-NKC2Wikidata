@@ -17,6 +17,7 @@ use WQS::SPARQL::Result;
 use Wikibase::API;
 use Wikibase::Cache;
 use Wikibase::Datatype::Print::Item;
+use Wikidata::Reconcilation::VersionEditionOrTranslation;
 
 our $VERSION = 0.01;
 
@@ -103,34 +104,31 @@ sub run {
 	# Wikidata Query Service SPARQL connection instance.
 	my $q = WQS::SPARQL->new;
 
-	# Check if record exists.
-	my @isbns;
+	# Check if record exists on Wikidata.
+	my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new;
+	my %external_identifiers = ();
 	foreach my $isbn (@{$m2wd->object->isbns}) {
 		if ($isbn->type eq 13) {
-			push @isbns, 'P212', $isbn->isbn;
+			# TODO Multiple ISBNs.
+			$external_identifiers{'P212'} = $isbn->isbn;
 		} else {
-			push @isbns, 'P957', $isbn->isbn;
+			$external_identifiers{'P957'} = $isbn->isbn;
 		}
 	}
-	if (! defined $ccnb) {
-		$ccnb = $m2wd->object->ccnb;
+	if (defined $ccnb || defined $m2wd->object->ccnb) {
+		$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
 	}
-	my $query_counts_hr = {
-		defined $ccnb ? ('P3184' => $ccnb) : (),
-		@isbns,
-	};
-	foreach my $property (keys %{$query_counts_hr}) {
-		my $property_value = $query_counts_hr->{$property};
-		my $sparql_count = WQS::SPARQL::Query::Count->new->count_value($property, $property_value);
-		my $count = $q->query_count($sparql_count);
-		if ($count) {
-			print "Record with property '$property' and value '$property_value' exists.\n";
-			return 0;
-		}
+	if (defined $m2wd->object->oclc) {
+		$external_identifiers{'P243'} = $m2wd->object->oclc;
 	}
-
-	# TODO Try to search book edition in Wikidata via author and name and year if exist
-	# TODO Reconcilation?
+	# TODO name, author, year, publisher
+	my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
+	if (@qids) {
+		print "Found these QIDs:\n";
+		print join "\n", @qids;
+		print "\n";
+		exit 0;
+	}
 
 	my $item = $m2wd->wikidata;
 
