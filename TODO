@@ -6,7 +6,6 @@ TODO
 4. Look for original literary work (MARC field 24010)
 5. If i am not uploading to Wikidata, no check for existence. (with explicit option)
 6. Debug mode.
-7. Move reconcilations related to NKC to NKC:: module.
 8. Look to publisher reconcilation for cnb001705695 - Another publisher, than
 expected.
 9. Implement poster - https://aleph.nkp.cz/F/?func=direct&doc_number=002997599&local_base=CNB
@@ -20,3 +19,6 @@ expected.
 
 Applied
 =======
+7. Move reconcilations related to NKC to NKC:: module.
+I have Wikidata::Reconcilation:: NS.
+NONE [20230418] skim
