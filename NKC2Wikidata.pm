@@ -105,29 +105,31 @@ sub run {
 	my $q = WQS::SPARQL->new;
 
 	# Check if record exists on Wikidata.
-	my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new;
-	my %external_identifiers = ();
-	foreach my $isbn (@{$m2wd->object->isbns}) {
-		if ($isbn->type eq 13) {
-			# TODO Multiple ISBNs.
-			$external_identifiers{'P212'} = $isbn->isbn;
-		} else {
-			$external_identifiers{'P957'} = $isbn->isbn;
+	if ($m2wd->type eq 'monograph') {
+		my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new;
+		my %external_identifiers = ();
+		foreach my $isbn (@{$m2wd->object->isbns}) {
+			if ($isbn->type eq 13) {
+				# TODO Multiple ISBNs.
+				$external_identifiers{'P212'} = $isbn->isbn;
+			} else {
+				$external_identifiers{'P957'} = $isbn->isbn;
+			}
 		}
-	}
-	if (defined $ccnb || defined $m2wd->object->ccnb) {
-		$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
-	}
-	if (defined $m2wd->object->oclc) {
-		$external_identifiers{'P243'} = $m2wd->object->oclc;
-	}
-	# TODO name, author, year, publisher
-	my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
-	if (@qids) {
-		print "Found these QIDs:\n";
-		print join "\n", @qids;
-		print "\n";
-		exit 0;
+		if (defined $ccnb || defined $m2wd->object->ccnb) {
+			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		}
+		if (defined $m2wd->object->oclc) {
+			$external_identifiers{'P243'} = $m2wd->object->oclc;
+		}
+		# TODO name, author, year, publisher
+		my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
+		if (@qids) {
+			print "Found these QIDs:\n";
+			print join "\n", @qids;
+			print "\n";
+			exit 0;
+		}
 	}
 
 	my $item = $m2wd->wikidata;
