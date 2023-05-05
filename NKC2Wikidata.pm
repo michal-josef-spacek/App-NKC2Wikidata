@@ -128,7 +128,7 @@ sub run {
 			print "Found these QIDs:\n";
 			print join "\n", @qids;
 			print "\n";
-			exit 0;
+			return 0;
 		}
 	} elsif ($m2wd->type eq 'audiobook') {
 		err "Audiobook guess not handled.";
