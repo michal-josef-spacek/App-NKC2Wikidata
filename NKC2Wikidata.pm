@@ -17,6 +17,7 @@ use WQS::SPARQL::Result;
 use Wikibase::API;
 use Wikibase::Cache;
 use Wikibase::Datatype::Print::Item;
+use Wikidata::Reconcilation::AudioBook;
 use Wikidata::Reconcilation::VersionEditionOrTranslation;
 
 our $VERSION = 0.01;
@@ -131,7 +132,19 @@ sub run {
 			return 0;
 		}
 	} elsif ($m2wd->type eq 'audiobook') {
-		err "Audiobook guess not handled.";
+		my $r = Wikidata::Reconcilation::AudioBook->new;
+		my %external_identifiers = ();
+		if (defined $ccnb || defined $m2wd->object->ccnb) {
+			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		}
+		# TODO name, author, year, publisher
+		my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
+		if (@qids) {
+			print "Found these QIDs:\n";
+			print join "\n", @qids;
+			print "\n";
+			return 0;
+		}
 	} else {
 		err "Guess for '".$m2wd->type."' doesn't supported.";
 	}

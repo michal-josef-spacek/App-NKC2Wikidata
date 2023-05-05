@@ -33,6 +33,7 @@ requires 'WQS::SPARQL::Result' => 0;
 requires 'Wikibase::API' => 0;
 requires 'Wikibase::Cache' => 0;
 requires 'Wikibase::Datatype::Print::Item' => 0;
+requires 'Wikidata::Reconcilation::AudioBook' => 0;
 requires 'Wikidata::Reconcilation::VersionEditionOrTranslation' => 0;
 resources 'bugtracker' => 'https://github.com/michal-josef-spacek/App-NKC2Wikidata/issues',
 resources 'homepage' => 'https://github.com/michal-josef-spacek/App-NKC2Wikidata';
