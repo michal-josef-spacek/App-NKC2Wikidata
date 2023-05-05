@@ -130,6 +130,10 @@ sub run {
 			print "\n";
 			exit 0;
 		}
+	} elsif ($m2wd->type eq 'audiobook') {
+		err "Audiobook guess not handled.";
+	} else {
+		err "Guess for '".$m2wd->type."' doesn't supported.";
 	}
 
 	my $item = $m2wd->wikidata;
