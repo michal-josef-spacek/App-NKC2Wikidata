@@ -106,6 +106,7 @@ sub run {
 	my $q = WQS::SPARQL->new;
 
 	# Check if record exists on Wikidata.
+	my @qids;
 	if ($m2wd->type eq 'monograph') {
 		my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new;
 		my %external_identifiers = ();
@@ -124,13 +125,7 @@ sub run {
 			$external_identifiers{'P243'} = $m2wd->object->oclc;
 		}
 		# TODO name, author, year, publisher
-		my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
-		if (@qids) {
-			print "Found these QIDs:\n";
-			print join "\n", @qids;
-			print "\n";
-			return 0;
-		}
+		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
 	} elsif ($m2wd->type eq 'audiobook') {
 		my $r = Wikidata::Reconcilation::AudioBook->new;
 		my %external_identifiers = ();
@@ -138,15 +133,15 @@ sub run {
 			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
 		}
 		# TODO name, author, year, publisher
-		my @qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
-		if (@qids) {
-			print "Found these QIDs:\n";
-			print join "\n", @qids;
-			print "\n";
-			return 0;
-		}
+		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
 	} else {
 		err "Guess for '".$m2wd->type."' doesn't supported.";
+	}
+	if (@qids) {
+		print "Found these QIDs:\n";
+		print join "\n", @qids;
+		print "\n";
+		return 0;
 	}
 
 	my $item = $m2wd->wikidata;
