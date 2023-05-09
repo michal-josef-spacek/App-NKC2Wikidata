@@ -40,6 +40,7 @@ requires:
   Wikibase::Cache: 0
   Wikibase::Datatype::Print::Item: 0
   Wikidata::Reconcilation::AudioBook: 0
+  Wikidata::Reconcilation::Periodical: 0
   Wikidata::Reconcilation::VersionEditionOrTranslation: 0
   ZOOM: 0
   perl: 5.6.0

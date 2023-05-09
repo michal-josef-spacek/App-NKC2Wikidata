@@ -18,6 +18,7 @@ use Wikibase::API;
 use Wikibase::Cache;
 use Wikibase::Datatype::Print::Item;
 use Wikidata::Reconcilation::AudioBook;
+use Wikidata::Reconcilation::Periodical;
 use Wikidata::Reconcilation::VersionEditionOrTranslation;
 
 our $VERSION = 0.01;
@@ -128,6 +129,14 @@ sub run {
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
 	} elsif ($m2wd->type eq 'audiobook') {
 		my $r = Wikidata::Reconcilation::AudioBook->new;
+		my %external_identifiers = ();
+		if (defined $ccnb || defined $m2wd->object->ccnb) {
+			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		}
+		# TODO name, author, year, publisher
+		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
+	} elsif ($m2wd->type eq 'periodical') {
+		my $r = Wikidata::Reconcilation::Periodical->new;
 		my %external_identifiers = ();
 		if (defined $ccnb || defined $m2wd->object->ccnb) {
 			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
