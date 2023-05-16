@@ -50,8 +50,8 @@ sub run {
 		print STDERR "\t-h\t\tPrint help.\n";
 		print STDERR "\t-u\t\tUpload (instead of print).\n";
 		print STDERR "\t--version\tPrint version.\n";
-		print STDERR "\tid_of_book\tModule prefix. e.g. ".
-			"Module::Install\n";
+		print STDERR "\tid_of_book\tIdentifier of book e.g. Czech ".
+			"national bibliography id or ISBN".
 		return 1;
 	}
 	$self->{'_id_of_book'} = shift @ARGV;
