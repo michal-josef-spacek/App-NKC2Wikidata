@@ -136,13 +136,27 @@ sub run {
 		# TODO name, author, year, publisher
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
 	} elsif ($m2wd->type eq 'periodical') {
-		my $r = Wikidata::Reconcilation::Periodical->new;
+		my $r = Wikidata::Reconcilation::Periodical->new(
+			'language' => 'cs',
+		);
 		my %external_identifiers = ();
 		if (defined $ccnb || defined $m2wd->object->ccnb) {
 			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
 		}
-		# TODO name, author, year, publisher
-		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
+		if (defined $m2wd->object->issn) {
+			$external_identifiers{'P236'} = $m2wd->object->issn;
+		}
+		# TODO author, publisher
+		@qids = $r->reconcile({
+			'external_identifiers' => \%external_identifiers,
+			'identifiers' => {
+				'end_time' => $m2wd->object->end_time,,
+				'name' => $m2wd->object->title,
+				'start_time' => $m2wd->object->start_time,
+				# TODO Add to reconcile process.
+				#'publishers' => ['TODO', 'TODO'],
+			},
+		});
 	} else {
 		err "Guess for '".$m2wd->type."' doesn't supported.";
 	}
