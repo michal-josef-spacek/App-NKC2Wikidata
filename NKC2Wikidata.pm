@@ -18,6 +18,7 @@ use Wikibase::API;
 use Wikibase::Cache;
 use Wikibase::Datatype::Print::Item;
 use Wikidata::Reconcilation::AudioBook;
+use Wikidata::Reconcilation::BookSeries;
 use Wikidata::Reconcilation::Periodical;
 use Wikidata::Reconcilation::VersionEditionOrTranslation;
 
@@ -348,28 +349,18 @@ sub callback_publisher_place {
 sub callback_series {
 	my $series = shift;
 
-	my $series_name = $series->name;
-	my $sparql = <<"END";
-SELECT DISTINCT ?item WHERE {
-  ?item p:P31 ?stmt.
-  ?stmt ps:P31 wd:Q277759;
-  wikibase:rank ?rank.
-  FILTER(?rank != wikibase:DeprecatedRank)
-  ?item (rdfs:label|skos:altLabel) ?label .
-  FILTER(LANG(?label) = "cs").
-  FILTER(STR(?label) = "$series_name")
-}
-END
-	my $q = WQS::SPARQL->new;
-	my $ret_hr = $q->query($sparql);
-	my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	my $r = Wikidata::Reconcilation::BookSeries->new;
+	my @qids = $r->reconcile({
+		'name' => $series->name,
+		defined $series->publisher ? ('publisher' => $series->publisher->name) : (),
+	});
 
-	if (! defined $qid) {
+	if (! @qids) {
 		warn encode_utf8("Series '".$series->name."' doesn't exist in Wikidata.")."\n";
 		return;
 	}
 
-	return $qid->{'item'};
+	return $qids[0];
 }
 
 1;
@@ -445,6 +436,7 @@ L<Wikibase::API>,
 L<Wikibase::Cache>,
 L<Wikibase::Datatype::Print::Item>.
 L<Wikidata::Reconcilation::AudioBook>,
+L<Wikidata::Reconcilation::BookSeries>,
 L<Wikidata::Reconcilation::Periodical>,
 L<Wikidata::Reconcilation::VersionEditionOrTranslation>
 
