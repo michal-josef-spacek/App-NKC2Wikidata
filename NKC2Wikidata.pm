@@ -444,6 +444,9 @@ L<WQS::SPARQL::Result>,
 L<Wikibase::API>,
 L<Wikibase::Cache>,
 L<Wikibase::Datatype::Print::Item>.
+L<Wikidata::Reconcilation::AudioBook>,
+L<Wikidata::Reconcilation::Periodical>,
+L<Wikidata::Reconcilation::VersionEditionOrTranslation>
 
 =head1 REPOSITORY
 
