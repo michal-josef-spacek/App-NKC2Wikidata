@@ -42,13 +42,18 @@ sub run {
 	# Process arguments.
 	$self->{'_opts'} = {
 		'h' => 0,
+		'l' => $ENV{'WIKIDATA_LOGIN'},
+		'p' => $ENV{'WIKIDATA_PASSWORD'},
 		'u' => 0,
 	};
-	if (! getopts('hu', $self->{'_opts'}) || @ARGV < 1
+	if (! getopts('hl:p:u', $self->{'_opts'}) || @ARGV < 1
 		|| $self->{'_opts'}->{'h'}) {
 
-		print STDERR "Usage: $0 [-h] [--version] id_of_book\n";
+		print STDERR "Usage: $0 [-h] [-l wikidata_login] [-p wikidata_password] ".
+			"[-u] [--version] id_of_book\n";
 		print STDERR "\t-h\t\tPrint help.\n";
+		print STDERR "\t-l wikidata_login\tWikidata user name login.\n";
+		print STDERR "\t-p wikidata_password\tWikidata user name password.\n";
 		print STDERR "\t-u\t\tUpload (instead of print).\n";
 		print STDERR "\t--version\tPrint version.\n";
 		print STDERR "\tid_of_book\tIdentifier of book e.g. Czech ".
@@ -179,8 +184,8 @@ sub run {
 	# Save to Wikidata
 	} else {
 		my $api = Wikibase::API->new(
-			'login_name' => 'Skim',
-			'login_password' => 'Riejai0b',
+			'login_name' => $self->{'_opts'}->{'l'},,
+			'login_password' => $self->{'_opts'}->{'p'},
 			'mediawiki_site' => 'www.wikidata.org',
 		);
 		my $res = $api->create_item($item);
