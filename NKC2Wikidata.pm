@@ -44,17 +44,19 @@ sub run {
 		'h' => 0,
 		'l' => $ENV{'WIKIDATA_LOGIN'},
 		'p' => $ENV{'WIKIDATA_PASSWORD'},
+		'v' => 0,
 		'u' => 0,
 	};
-	if (! getopts('hl:p:u', $self->{'_opts'}) || @ARGV < 1
+	if (! getopts('hl:p:uv', $self->{'_opts'}) || @ARGV < 1
 		|| $self->{'_opts'}->{'h'}) {
 
 		print STDERR "Usage: $0 [-h] [-l wikidata_login] [-p wikidata_password] ".
-			"[-u] [--version] id_of_book\n";
+			"[-u] [-v] [--version] id_of_book\n";
 		print STDERR "\t-h\t\t\tPrint help.\n";
 		print STDERR "\t-l wikidata_login\tWikidata user name login.\n";
 		print STDERR "\t-p wikidata_password\tWikidata user name password.\n";
 		print STDERR "\t-u\t\t\tUpload (instead of print).\n";
+		print STDERR "\t-v\t\t\tVerbose mode.\n";
 		print STDERR "\t--version\t\tPrint version.\n";
 		print STDERR "\tid_of_book\t\tIdentifier of book e.g. Czech ".
 			"national bibliography id or ISBN".
@@ -115,7 +117,9 @@ sub run {
 	# Check if record exists on Wikidata.
 	my @qids;
 	if ($m2wd->type eq 'monograph') {
-		my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new;
+		my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
 		my %external_identifiers = ();
 		foreach my $isbn (@{$m2wd->object->isbns}) {
 			if ($isbn->type eq 13) {
@@ -134,7 +138,9 @@ sub run {
 		# TODO name, author, year, publisher
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
 	} elsif ($m2wd->type eq 'audiobook') {
-		my $r = Wikidata::Reconcilation::AudioBook->new;
+		my $r = Wikidata::Reconcilation::AudioBook->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
 		my %external_identifiers = ();
 		if (defined $ccnb || defined $m2wd->object->ccnb) {
 			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
@@ -144,6 +150,7 @@ sub run {
 	} elsif ($m2wd->type eq 'periodical') {
 		my $r = Wikidata::Reconcilation::Periodical->new(
 			'language' => 'cs',
+			'verbose' => $self->{'_opts'}->{'v'},
 		);
 		my %external_identifiers = ();
 		if (defined $ccnb || defined $m2wd->object->ccnb) {

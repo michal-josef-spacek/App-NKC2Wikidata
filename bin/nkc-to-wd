@@ -28,7 +28,7 @@ nkc-to-wd - Script to add book from National library of the Czech Republic to Wi
 
 =head1 SYNOPSIS
 
- nkc-to-wd [-h] [--version] id_of_book
+ nkc-to-wd [-h] [-v] [--version] id_of_book
 
 =head1 ARGUMENTS
 
@@ -37,6 +37,10 @@ nkc-to-wd - Script to add book from National library of the Czech Republic to Wi
 =item * C<-h>
 
 Print help.
+
+=item * C<-v>
+
+Verbose mode (default is 0).
 
 =item * C<--version>
 

@@ -3,12 +3,16 @@ NAME
     Republic to Wikidata.
 
 SYNOPSIS
-     nkc-to-wd [-h] [--version] id_of_book
+     nkc-to-wd [-h] [-v] [--version] id_of_book
 
 ARGUMENTS
     *       "-h"
 
             Print help.
+
+    *       "-v"
+
+            Verbose mode (default is 0).
 
     *       "--version"
 
