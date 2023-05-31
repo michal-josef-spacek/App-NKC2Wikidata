@@ -51,12 +51,12 @@ sub run {
 
 		print STDERR "Usage: $0 [-h] [-l wikidata_login] [-p wikidata_password] ".
 			"[-u] [--version] id_of_book\n";
-		print STDERR "\t-h\t\tPrint help.\n";
+		print STDERR "\t-h\t\t\tPrint help.\n";
 		print STDERR "\t-l wikidata_login\tWikidata user name login.\n";
 		print STDERR "\t-p wikidata_password\tWikidata user name password.\n";
-		print STDERR "\t-u\t\tUpload (instead of print).\n";
-		print STDERR "\t--version\tPrint version.\n";
-		print STDERR "\tid_of_book\tIdentifier of book e.g. Czech ".
+		print STDERR "\t-u\t\t\tUpload (instead of print).\n";
+		print STDERR "\t--version\t\tPrint version.\n";
+		print STDERR "\tid_of_book\t\tIdentifier of book e.g. Czech ".
 			"national bibliography id or ISBN".
 		return 1;
 	}
