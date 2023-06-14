@@ -104,12 +104,12 @@ sub run {
 
 	# Conversion instance for MARC to Wikidata conversion.
 	my $m2wd = MARC::Convert::Wikidata->new(
-		'callback_cover' => \&callback_cover,
-		'callback_lang' => \&callback_lang,
-		'callback_publisher_place' => \&callback_publisher_place,
-		'callback_people' => \&callback_people,
-		'callback_publisher_name' => \&callback_publisher_name,
-		'callback_series' => \&callback_series,
+		'callback_cover' => callback_cover($self),
+		'callback_lang' => callback_lang($self),
+		'callback_publisher_place' => callback_publisher_place($self),
+		'callback_people' => callback_people($self),
+		'callback_publisher_name' => callback_publisher_name($self),
+		'callback_series' => callback_series($self),
 		'marc_record' => $usmarc,
 	);
 
@@ -211,79 +211,94 @@ sub run {
 }
 
 sub callback_cover {
-	my $cover = shift;
+	my $self = shift;
 
-	if ($cover eq 'hardback') {
-		return 'Q193955';
-	} elsif ($cover eq 'paperback') {
-		return 'Q193934';
+	return sub {
+		my $cover = shift;
+
+		if ($cover eq 'hardback') {
+			return 'Q193955';
+		} elsif ($cover eq 'paperback') {
+			return 'Q193934';
+		}
+
+		return;
 	}
-
-	return;
 }
 
 sub callback_lang {
-	my $lang = shift;
+	my $self = shift;
 
-	my $sparql = WQS::SPARQL::Query::Select->new->select_value({
-		'P219' => $lang,
-	});
-	my $q = WQS::SPARQL->new;
-	my $ret_hr = $q->query($sparql);
-	my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	return sub {
+		my $lang = shift;
 
-	if (! defined $qid) {
-		warn encode_utf8("Language with bibliographic code '".$lang."' doesn't exist in Wikidata.")."\n";
-		return;
+		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
+			'P219' => $lang,
+		});
+		my $q = WQS::SPARQL->new;
+		my $ret_hr = $q->query($sparql);
+		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+
+		if (! defined $qid) {
+			warn encode_utf8("Language with bibliographic code '".$lang."' doesn't exist in Wikidata.")."\n";
+			return;
+		}
+
+		return $qid->{'item'};
 	}
-
-	return $qid->{'item'};
 }
 
 # XXX Rewrite to Wikidata::Reconcilation::People
 sub callback_people {
-	my $people = shift;
+	my $self = shift;
 
-	if (! defined $people->nkcr_aut) {
-		my $people_name;
-		if (defined $people->name) {
-			$people_name .= $people->name;
-		}
-		if (defined $people->surname) {
-			if (defined $people_name) {
-				$people_name .= ' ';
+	return sub {
+		my $people = shift;
+
+		if (! defined $people->nkcr_aut) {
+			my $people_name;
+			if (defined $people->name) {
+				$people_name .= $people->name;
 			}
-			$people_name .= $people->surname;
+			if (defined $people->surname) {
+				if (defined $people_name) {
+					$people_name .= ' ';
+				}
+				$people_name .= $people->surname;
+			}
+			warn encode_utf8("People without NKCR AUT ID '".$people_name."' doesn't supported.")."\n";
+			return;
 		}
-		warn encode_utf8("People without NKCR AUT ID '".$people_name."' doesn't supported.")."\n";
-		return;
+
+		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
+			'P691' => $people->nkcr_aut,
+		});
+		my $q = WQS::SPARQL->new;
+		my $ret_hr = $q->query($sparql);
+		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+
+		if (! defined $qid) {
+			warn encode_utf8("People with NKCR AUT ID '".$people->nkcr_aut."' doesn't exist in Wikidata.")."\n";
+			return;
+		}
+
+		return $qid->{'item'};
 	}
-
-	my $sparql = WQS::SPARQL::Query::Select->new->select_value({
-		'P691' => $people->nkcr_aut,
-	});
-	my $q = WQS::SPARQL->new;
-	my $ret_hr = $q->query($sparql);
-	my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
-
-	if (! defined $qid) {
-		warn encode_utf8("People with NKCR AUT ID '".$people->nkcr_aut."' doesn't exist in Wikidata.")."\n";
-		return;
-	}
-
-	return $qid->{'item'};
 }
 
 # XXX Rewrite to Wikidata::Reconcilation::Publisher
 sub callback_publisher_name {
-	my ($publisher, $year) = @_;
+	my $self = shift;
 
-	my $publisher_name = $publisher->name;
-	my ($sparql, $q, $ret_hr, $qid);
+	return sub {
+		my ($publisher, $year) = @_;
 
-	# Look for publisher in official name and between years.
-	if (defined $year) {
-		my $sparql = <<"END";
+		my $publisher_name = $publisher->name;
+		my ($sparql, $q, $ret_hr, $qid);
+
+		# Look for publisher in official name and between years.
+		if (defined $year) {
+			my $sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   ?item wdt:P31 wd:Q2085381.
   ?item wdt:P571 ?inception.
@@ -293,25 +308,25 @@ SELECT DISTINCT ?item WHERE {
   FILTER( ?dissolved >= "$year-01-01T00:00:00"^^xsd:dateTime )
 }
 END
-		$q = WQS::SPARQL->new;
-		$ret_hr = $q->query($sparql);
-		($qid) = WQS::SPARQL::Result->new->result($ret_hr);
-	}
+			$q = WQS::SPARQL->new;
+			$ret_hr = $q->query($sparql);
+			($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+		}
 
-	# Look for publisher in official name.
-	if (! defined $qid) {
-		$sparql = WQS::SPARQL::Query::Select->new->select_value({
-			'P31' => 'Q2085381',
-			'P1448' => $publisher->name,
-		});
-		$q = WQS::SPARQL->new;
-		$ret_hr = $q->query($sparql);
-		($qid) = WQS::SPARQL::Result->new->result($ret_hr);
-	}
+		# Look for publisher in official name.
+		if (! defined $qid) {
+			$sparql = WQS::SPARQL::Query::Select->new->select_value({
+				'P31' => 'Q2085381',
+				'P1448' => $publisher->name,
+			});
+			$q = WQS::SPARQL->new;
+			$ret_hr = $q->query($sparql);
+			($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+		}
 
-	# Look for publisher in label.
-	if (! defined $qid) {
-		$sparql = <<"END";
+		# Look for publisher in label.
+		if (! defined $qid) {
+			$sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   {
     ?item p:P31 ?stmt.
@@ -328,53 +343,64 @@ SELECT DISTINCT ?item WHERE {
   FILTER(STR(?label) = "$publisher_name")
 }
 END
-		$ret_hr = $q->query($sparql);
-		($qid) = WQS::SPARQL::Result->new->result($ret_hr);
-	}
+			$ret_hr = $q->query($sparql);
+			($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+		}
 
-	if (! defined $qid) {
-		warn encode_utf8("Publishing house '".$publisher->name."' doesn't exist in Wikidata.")."\n";
-		return;
-	}
+		if (! defined $qid) {
+			warn encode_utf8("Publishing house '".$publisher->name."' doesn't exist in Wikidata.")."\n";
+			return;
+		}
 
-	return $qid->{'item'};
+		return $qid->{'item'};
+	}
 }
 
 # XXX Rewrite to Wikidata::Reconcilation::Publisher
 sub callback_publisher_place {
-	my $publisher = shift;
+	my $self = shift;
 
-	my $sparql = WQS::SPARQL::Query::Select->new->select_value({
-		'P31' => 'Q5153359',
-		'P1705' => $publisher->place.'@cs',
-	});
-	my $q = WQS::SPARQL->new;
-	my $ret_hr = $q->query($sparql);
-	my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+	return sub {
+		my $publisher = shift;
 
-	if (! defined $qid) {
-		warn encode_utf8("Publishing house place '".$publisher->place."' doesn't exist in Wikidata.")."\n";
-		return;
+		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
+			'P31' => 'Q5153359',
+			'P1705' => $publisher->place.'@cs',
+		});
+		my $q = WQS::SPARQL->new;
+		my $ret_hr = $q->query($sparql);
+		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
+
+		if (! defined $qid) {
+			warn encode_utf8("Publishing house place '".$publisher->place."' doesn't exist in Wikidata.")."\n";
+			return;
+		}
+
+		return $qid->{'item'};
 	}
-
-	return $qid->{'item'};
 }
 
 sub callback_series {
-	my $series = shift;
+	my $self = shift;
 
-	my $r = Wikidata::Reconcilation::BookSeries->new;
-	my @qids = $r->reconcile({
-		'name' => $series->name,
-		defined $series->publisher ? ('publisher' => $series->publisher->name) : (),
-	});
+	return sub {
+		my $series = shift;
 
-	if (! @qids) {
-		warn encode_utf8("Series '".$series->name."' doesn't exist in Wikidata.")."\n";
-		return;
+		my $r = Wikidata::Reconcilation::BookSeries->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
+		my @qids = $r->reconcile({
+			'name' => $series->name,
+			defined $series->publisher ? ('publisher' => $series->publisher->name) : (),
+		});
+
+		if (! @qids) {
+			warn encode_utf8("Series '".$series->name."' doesn't exist in Wikidata.")."\n";
+			return;
+		}
+
+		return $qids[0];
 	}
-
-	return $qids[0];
 }
 
 1;
