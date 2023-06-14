@@ -24,6 +24,8 @@ use Wikidata::Reconcilation::VersionEditionOrTranslation;
 
 our $VERSION = 0.01;
 
+$| = 1;
+
 # Constructor.
 sub new {
 	my ($class, @params) = @_;
