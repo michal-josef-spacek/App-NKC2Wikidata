@@ -18,7 +18,8 @@ expected.
 16. U cnb003378007 nastavuje title v Anglictine.
 17. Nice example with printer, publisher and distribution: cnb000359587
 18. Fix doc in bin/
-19.
+19. If I add `nkc-to-wd 1804-1981` it is failing with bad item.
+20.
 
 Applied
 =======
