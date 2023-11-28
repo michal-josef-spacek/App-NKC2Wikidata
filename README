@@ -3,12 +3,24 @@ NAME
     Republic to Wikidata.
 
 SYNOPSIS
-     nkc-to-wd [-h] [-v] [--version] id_of_book
+     nkc-to-wd [-h]  [-l wikidata_login] [-p wikidata_password] [-u] [-v] [--version] id_of_book
 
 ARGUMENTS
     *       "-h"
 
             Print help.
+
+    *       "-l wikidata_login"
+
+            Wikidata user name login.
+
+    *       "-p wikidata_password"
+
+            Wikidata user name password.
+
+    *       "-u"
+
+            Upload (instead of print).
 
     *       "-v"
 
