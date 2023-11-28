@@ -61,7 +61,7 @@ sub run {
 		print STDERR "\t-v\t\t\tVerbose mode.\n";
 		print STDERR "\t--version\t\tPrint version.\n";
 		print STDERR "\tid_of_book\t\tIdentifier of book e.g. Czech ".
-			"national bibliography id or ISBN".
+			"national bibliography id or ISBN\n";
 		return 1;
 	}
 	$self->{'_id_of_book'} = shift @ARGV;
