@@ -299,6 +299,7 @@ sub callback_publisher_name {
 
 		# Look for publisher in official name and between years.
 		if (defined $year) {
+			$publisher_name =~ s/'/\\'/mgs;
 			my $sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   ?item wdt:P31 wd:Q2085381.
@@ -331,6 +332,7 @@ END
 
 		# Look for publisher in label.
 		if (! defined $qid) {
+			$publisher_name =~ s/"/\\"/mgs;
 			$sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   {
