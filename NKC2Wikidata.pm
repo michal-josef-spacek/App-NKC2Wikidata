@@ -113,9 +113,6 @@ sub run {
 		'marc_record' => $usmarc,
 	);
 
-	# Wikidata Query Service SPARQL connection instance.
-	my $q = WQS::SPARQL->new;
-
 	# Check if record exists on Wikidata.
 	my @qids;
 	if ($m2wd->type eq 'monograph') {
