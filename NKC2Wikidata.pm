@@ -232,7 +232,9 @@ sub callback_lang {
 		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
 			'P219' => $lang,
 		});
-		my $q = WQS::SPARQL->new;
+		my $q = WQS::SPARQL->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
 		my $ret_hr = $q->query($sparql);
 		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 
@@ -270,7 +272,9 @@ sub callback_people {
 		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
 			'P691' => $people->nkcr_aut,
 		});
-		my $q = WQS::SPARQL->new;
+		my $q = WQS::SPARQL->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
 		my $ret_hr = $q->query($sparql);
 		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 
@@ -305,7 +309,9 @@ SELECT DISTINCT ?item WHERE {
   FILTER( ?dissolved >= "$year-01-01T00:00:00"^^xsd:dateTime )
 }
 END
-			$q = WQS::SPARQL->new;
+			$q = WQS::SPARQL->new(
+				'verbose' => $self->{'_opts'}->{'v'},
+			);
 			$ret_hr = $q->query($sparql);
 			($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 		}
@@ -316,7 +322,9 @@ END
 				'P31' => 'Q2085381',
 				'P1448' => $publisher->name,
 			});
-			$q = WQS::SPARQL->new;
+			$q = WQS::SPARQL->new(
+				'verbose' => $self->{'_opts'}->{'v'},
+			);
 			$ret_hr = $q->query($sparql);
 			($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 		}
@@ -364,7 +372,9 @@ sub callback_publisher_place {
 			'P31' => 'Q5153359',
 			'P1705' => $publisher->place.'@cs',
 		});
-		my $q = WQS::SPARQL->new;
+		my $q = WQS::SPARQL->new(
+			'verbose' => $self->{'_opts'}->{'v'},
+		);
 		my $ret_hr = $q->query($sparql);
 		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 
