@@ -321,7 +321,7 @@ END
 		if (! defined $qid) {
 			$sparql = WQS::SPARQL::Query::Select->new->select_value({
 				'P31' => 'Q2085381',
-				'P1448' => $publisher->name,
+				'P1448' => $publisher->name.'@cs',
 			});
 			$q = WQS::SPARQL->new(
 				'verbose' => $self->{'_opts'}->{'v'},
