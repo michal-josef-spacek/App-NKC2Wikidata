@@ -5,6 +5,7 @@ use warnings;
 
 use Business::ISBN;
 use Encode qw(decode_utf8 encode_utf8);
+use English;
 use Error::Pure qw(err);
 use Getopt::Std;
 use MARC::Convert::Wikidata;
@@ -75,10 +76,18 @@ sub run {
 	};
 
 	# ZOOM object.
-	my $conn = ZOOM::Connection->new(
-		$c->{'host'}, $c->{'port'},
-		'databaseName' => $c->{'database'},
-	);
+	my $conn = eval {
+		ZOOM::Connection->new(
+			$c->{'host'}, $c->{'port'},
+			'databaseName' => $c->{'database'},
+		);
+	};
+	if ($EVAL_ERROR) {
+		err "Cannot connect to '".$c->{'host'}."'.",
+			'Code', $EVAL_ERROR->code,
+			'Message', $EVAL_ERROR->message,
+		;
+	}
 	$conn->option(preferredRecordSyntax => $c->{'record'});
 
 	# Get MARC record from library.

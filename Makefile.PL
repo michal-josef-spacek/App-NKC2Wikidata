@@ -21,6 +21,7 @@ readme_from 'bin/nkc-to-wd';
 recursive_author_tests('xt');
 requires 'Business::ISBN' => 0;
 requires 'Encode' => 0;
+requires 'English' => 0;
 requires 'Error::Pure' => 0;
 requires 'Getopt::Std' => 0;
 requires 'MARC::Convert::Wikidata' => 0;
