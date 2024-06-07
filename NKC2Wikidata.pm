@@ -308,13 +308,14 @@ sub callback_publisher_name {
 
 		# Look for publisher in official name and between years.
 		if (defined $year) {
-			$publisher_name =~ s/'/\\'/mgs;
+			my $tmp_publisher_name = $publisher_name;
+			$tmp_publisher_name =~ s/'/\\'/mgs;
 			my $sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   ?item wdt:P31 wd:Q2085381.
   ?item wdt:P571 ?inception.
   ?item wdt:P576 ?dissolved.
-  ?item wdt:P1448 '$publisher_name'\@cs.
+  ?item wdt:P1448 '$tmp_publisher_name'\@cs.
   FILTER( ?inception <= "$year-31-12T00:00:00"^^xsd:dateTime )
   FILTER( ?dissolved >= "$year-01-01T00:00:00"^^xsd:dateTime )
 }
@@ -341,7 +342,8 @@ END
 
 		# Look for publisher in label.
 		if (! defined $qid) {
-			$publisher_name =~ s/"/\\"/mgs;
+			my $tmp_publisher_name = $publisher_name;
+			$tmp_publisher_name =~ s/"/\\"/mgs;
 			$sparql = <<"END";
 SELECT DISTINCT ?item WHERE {
   {
@@ -356,7 +358,7 @@ SELECT DISTINCT ?item WHERE {
   FILTER(?rank != wikibase:DeprecatedRank)
   ?item (rdfs:label|skos:altLabel) ?label .
   FILTER(LANG(?label) = "cs").
-  FILTER(STR(?label) = "$publisher_name")
+  FILTER(STR(?label) = "$tmp_publisher_name")
 }
 END
 			$ret_hr = $q->query($sparql);
