@@ -203,7 +203,7 @@ sub run {
 			'login_password' => $self->{'_opts'}->{'p'},
 			'mediawiki_site' => 'www.wikidata.org',
 		);
-		my $res = $api->create_item($item);
+		my $res = $api->create_item($item, 'nkc-to-wd tool');
 
 		if ($res->{'success'}) {
 			my $id = $res->{'entity'}->{'id'};

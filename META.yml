@@ -37,7 +37,7 @@ requires:
   WQS::SPARQL::Query::Count: 0
   WQS::SPARQL::Query::Select: 0
   WQS::SPARQL::Result: 0
-  Wikibase::API: 0
+  Wikibase::API: 0.05
   Wikibase::Cache: 0
   Wikibase::Datatype::Print::Item: 0
   Wikidata::Reconcilation::AudioBook: 0
