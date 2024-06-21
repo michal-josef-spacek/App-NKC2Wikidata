@@ -124,7 +124,7 @@ sub run {
 
 	# Check if record exists on Wikidata.
 	my @qids;
-	if ($m2wd->type eq 'monograph') {
+	if ($m2wd->type eq 'monograph_text') {
 		my $r = Wikidata::Reconcilation::VersionEditionOrTranslation->new(
 			'verbose' => $self->{'_opts'}->{'v'},
 		);
@@ -145,7 +145,7 @@ sub run {
 		}
 		# TODO name, author, year, publisher
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
-	} elsif ($m2wd->type eq 'audiobook') {
+	} elsif ($m2wd->type eq 'monograph_audiobook') {
 		my $r = Wikidata::Reconcilation::AudioBook->new(
 			'verbose' => $self->{'_opts'}->{'v'},
 		);
