@@ -31,7 +31,7 @@ requires:
   English: 0
   Error::Pure: 0
   Getopt::Std: 0
-  MARC::Convert::Wikidata: 0
+  MARC::Convert::Wikidata: 0.13
   MARC::Record: 0
   WQS::SPARQL: 0
   WQS::SPARQL::Query::Count: 0

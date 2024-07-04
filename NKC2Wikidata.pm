@@ -8,7 +8,8 @@ use Encode qw(decode_utf8 encode_utf8);
 use English;
 use Error::Pure qw(err);
 use Getopt::Std;
-use MARC::Convert::Wikidata;
+use MARC::Convert::Wikidata 0.13;
+use MARC::Convert::Wikidata::Utils 0.13 qw(look_for_external_id);
 use MARC::Record;
 use ZOOM;
 use WQS::SPARQL;
@@ -122,6 +123,10 @@ sub run {
 		'marc_record' => $usmarc,
 	);
 
+	if (! defined $ccnb) {
+		$ccnb = $m2wd->look_for_external_id('cnb');
+	}
+
 	# Check if record exists on Wikidata.
 	my @qids;
 	if ($m2wd->type eq 'monograph_text') {
@@ -137,11 +142,12 @@ sub run {
 				$external_identifiers{'P957'} = $isbn->isbn;
 			}
 		}
-		if (defined $ccnb || defined $m2wd->object->ccnb) {
-			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		if (defined $ccnb) {
+			$external_identifiers{'P3184'} = $ccnb;
 		}
-		if (defined $m2wd->object->oclc) {
-			$external_identifiers{'P243'} = $m2wd->object->oclc;
+		my $lccn = $m2wd->look_for_external_id('lccn');
+		if (defined $lccn) {
+			$external_identifiers{'P243'} = $lccn;
 		}
 		# TODO name, author, year, publisher
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
@@ -150,8 +156,8 @@ sub run {
 			'verbose' => $self->{'_opts'}->{'v'},
 		);
 		my %external_identifiers = ();
-		if (defined $ccnb || defined $m2wd->object->ccnb) {
-			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		if (defined $ccnb) {
+			$external_identifiers{'P3184'} = $ccnb;
 		}
 		# TODO name, author, year, publisher
 		@qids = $r->reconcile({'external_identifiers' => \%external_identifiers});
@@ -161,8 +167,8 @@ sub run {
 			'verbose' => $self->{'_opts'}->{'v'},
 		);
 		my %external_identifiers = ();
-		if (defined $ccnb || defined $m2wd->object->ccnb) {
-			$external_identifiers{'P3184'} = $ccnb || $m2wd->object->ccnb;
+		if (defined $ccnb) {
+			$external_identifiers{'P3184'} = $ccnb;
 		}
 		if (defined $m2wd->object->issn) {
 			$external_identifiers{'P236'} = $m2wd->object->issn;
@@ -263,7 +269,8 @@ sub callback_people {
 	return sub {
 		my $people = shift;
 
-		if (! defined $people->nkcr_aut) {
+		my $nkcr_aut = look_for_external_id($people, 'nkcr_aut');
+		if (! defined $nkcr_aut) {
 			my $people_name;
 			if (defined $people->name) {
 				$people_name .= $people->name;
@@ -279,7 +286,7 @@ sub callback_people {
 		}
 
 		my $sparql = WQS::SPARQL::Query::Select->new->select_value({
-			'P691' => $people->nkcr_aut,
+			'P691' => $nkcr_aut,
 		});
 		my $q = WQS::SPARQL->new(
 			'verbose' => $self->{'_opts'}->{'v'},
@@ -288,7 +295,7 @@ sub callback_people {
 		my ($qid) = WQS::SPARQL::Result->new->result($ret_hr);
 
 		if (! defined $qid) {
-			warn encode_utf8("People with NKCR AUT ID '".$people->nkcr_aut."' doesn't exist in Wikidata.")."\n";
+			warn encode_utf8("People with NKCR AUT ID '".$nkcr_aut."' doesn't exist in Wikidata.")."\n";
 			return;
 		}
 
