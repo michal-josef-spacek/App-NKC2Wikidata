@@ -8,7 +8,7 @@ use Encode qw(decode_utf8 encode_utf8);
 use English;
 use Error::Pure qw(err);
 use Getopt::Std;
-use MARC::Convert::Wikidata 0.13;
+use MARC::Convert::Wikidata 0.16;
 use MARC::Convert::Wikidata::Utils 0.13 qw(look_for_external_id);
 use MARC::Record;
 use ZOOM;
@@ -411,7 +411,9 @@ sub callback_series {
 	my $self = shift;
 
 	return sub {
-		my $series = shift;
+		my ($series, $no_warn) = @_;
+
+		$no_warn ||= 0;
 
 		my $r = Wikidata::Reconcilation::BookSeries->new(
 			'verbose' => $self->{'_opts'}->{'v'},
@@ -422,7 +424,9 @@ sub callback_series {
 		});
 
 		if (! @qids) {
-			warn encode_utf8("Series '".$series->name."' doesn't exist in Wikidata.")."\n";
+			if (! $no_warn) {
+				warn encode_utf8("Series '".$series->name."' doesn't exist in Wikidata.")."\n";
+			}
 			return;
 		}
 
