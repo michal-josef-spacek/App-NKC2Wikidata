@@ -8,7 +8,7 @@ use Encode qw(decode_utf8 encode_utf8);
 use English;
 use Error::Pure qw(err);
 use Getopt::Std;
-use MARC::Convert::Wikidata 0.16;
+use MARC::Convert::Wikidata 0.18;
 use MARC::Convert::Wikidata::Utils 0.13 qw(look_for_external_id);
 use MARC::Record;
 use ZOOM;
@@ -115,6 +115,7 @@ sub run {
 	# Conversion instance for MARC to Wikidata conversion.
 	my $m2wd = MARC::Convert::Wikidata->new(
 		'callback_cover' => callback_cover($self),
+		'callback_cycles' => callback_series($self),
 		'callback_lang' => callback_lang($self),
 		'callback_publisher_place' => callback_publisher_place($self),
 		'callback_people' => callback_people($self),
