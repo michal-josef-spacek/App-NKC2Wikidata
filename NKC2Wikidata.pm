@@ -206,7 +206,7 @@ sub run {
 	# Save to Wikidata
 	} else {
 		my $api = Wikibase::API->new(
-			'login_name' => $self->{'_opts'}->{'l'},,
+			'login_name' => $self->{'_opts'}->{'l'},
 			'login_password' => $self->{'_opts'}->{'p'},
 			'mediawiki_site' => 'www.wikidata.org',
 		);
