@@ -365,7 +365,7 @@ SELECT DISTINCT ?item WHERE {
   }
   FILTER(?rank != wikibase:DeprecatedRank)
   ?item (rdfs:label|skos:altLabel) ?label .
-  FILTER(LANG(?label) = "cs").
+  FILTER(LANG(?label) = "cs" || LANG(?label) = "mul").
   FILTER(STR(?label) = "$tmp_publisher_name")
 }
 END
