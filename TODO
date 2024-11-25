@@ -20,7 +20,8 @@ expected.
 18. Fix doc in bin/
 19. If I add `nkc-to-wd 1804-1981` it is failing with bad item.
 20. Add another publisher (Q125996114)
-21.
+21. Add lookup for series ISSN.
+22.
 
 Applied
 =======
