@@ -136,6 +136,9 @@ sub run {
 		);
 		my %external_identifiers = ();
 		foreach my $isbn (@{$m2wd->object->isbns}) {
+			if ($isbn->collective) {
+				next;
+			}
 			if ($isbn->type eq 13) {
 				# TODO Multiple ISBNs.
 				$external_identifiers{'P212'} = $isbn->isbn;
